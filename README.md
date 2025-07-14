@@ -41,7 +41,15 @@ See [benchmarks](./benchmarks/README.md) for more info.
 
 ## Architecture
 
-See [./architecture.md]
+Oxlint CLI -> paths + rules -> tsgolint -> diagnostics -> Oxlint CLI.
+
+* Oxlint is the "frontend" for tsgolint, it handles cli, paths walk, ignore logic and printing of diagnostics.
+* tsgolint is the backend for Oxlint, accepting paths as input, and output structured diagnostics.
+
+Scope of tsgolint is only:
+
+* run the type aware rules
+* pass structured diagnostics back to oxlint
 
 ## Building `tsgolint`
 
