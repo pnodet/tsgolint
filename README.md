@@ -8,6 +8,7 @@ This project originated in [typescript-eslint/tsgolint](https://github.com/types
 
 > [!IMPORTANT]
 > **tsgolint** is a prototype in the early stages of development.
+> This is a community effort. Feel free to ask for assignee in any of the [good first issues](https://github.com/oxc-project/tsgolint/contribute).
 
 ![Running tsgolint on microsoft/typescript repo](./docs/record.gif)
 
