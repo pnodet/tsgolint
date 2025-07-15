@@ -36,15 +36,20 @@ var PreferReturnThisTypeRule = rule.Rule{
 			return nil
 		}
 
-		checkFunction := func(fn *ast.Node, originalClass *ast.ClassDeclaration) {
+		checkFunction := func(fn *ast.Node, originalClass *ast.Node) {
 			returnType := fn.Type()
 			body := fn.Body()
 			if returnType == nil || body == nil {
 				return
 			}
-			className := originalClass.Name().Text()
 
-			node := tryGetNameInTypeNode(className, returnType)
+			className := originalClass.Name()
+
+			if className == nil {
+				return
+			}
+
+			node := tryGetNameInTypeNode(className.Text(), returnType)
 			if node == nil {
 				return
 			}
@@ -57,7 +62,7 @@ var PreferReturnThisTypeRule = rule.Rule{
 				}
 			}
 
-			classType := ctx.TypeChecker.GetTypeAtLocation(originalClass.AsNode()).AsInterfaceType()
+			classType := ctx.TypeChecker.GetTypeAtLocation(originalClass).AsInterfaceType()
 
 			if ast.IsBlock(body) {
 				hasReturnThis := false
@@ -98,7 +103,7 @@ var PreferReturnThisTypeRule = rule.Rule{
 
 		return rule.RuleListeners{
 			ast.KindPropertyDeclaration: func(node *ast.Node) {
-				if !ast.IsClassDeclaration(node.Parent) {
+				if !ast.IsClassLike(node.Parent) {
 					return
 				}
 
@@ -109,14 +114,14 @@ var PreferReturnThisTypeRule = rule.Rule{
 				}
 
 				if ast.IsFunctionExpression(property.Initializer) || ast.IsArrowFunction(property.Initializer) {
-					checkFunction(property.Initializer, node.Parent.AsClassDeclaration())
+					checkFunction(property.Initializer, node.Parent)
 				}
 			},
 			ast.KindMethodDeclaration: func(node *ast.Node) {
-				if !ast.IsClassDeclaration(node.Parent) {
+				if !ast.IsClassLike(node.Parent) {
 					return
 				}
-				checkFunction(node, node.Parent.AsClassDeclaration())
+				checkFunction(node, node.Parent)
 			},
 		}
 	},
